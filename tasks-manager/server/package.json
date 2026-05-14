@@ -1,0 +1,17 @@
+{
+  "name": "tasks-manager-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node --watch app.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "dotenv": "^16.0.0",
+    "express": "^5.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0"
+  }
+}
