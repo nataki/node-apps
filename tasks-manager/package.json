@@ -1,0 +1,9 @@
+{
+  "name": "tasks-manager",
+  "scripts": {
+    "dev": "concurrently \"npm start --prefix server\" \"npm run dev --prefix ui\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
