@@ -1,8 +1,8 @@
-import type { Task, ApiResult } from '../types';
+import type { TTask, TApiResult } from '../types';
 
 const url = '/api/v1/tasks';
 
-export const fetchAllTasks = async (): Promise<ApiResult<Task[]>> => {
+export const fetchAllTasks = async (): Promise<TApiResult<TTask[]>> => {
     try {
         const response = await fetch(url);
         if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
@@ -13,7 +13,7 @@ export const fetchAllTasks = async (): Promise<ApiResult<Task[]>> => {
     }
 };
 
-export const addTask = async (name: string): Promise<ApiResult<Task>> => {
+export const addTask = async (name: string): Promise<TApiResult<TTask>> => {
     try {
         const response = await fetch(url, {
             method: 'POST',

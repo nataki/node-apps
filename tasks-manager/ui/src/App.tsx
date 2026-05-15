@@ -3,10 +3,10 @@ import './App.css';
 import { fetchAllTasks } from './api';
 import { AddTaskForm } from './components/AddTaskForm';
 import { TasksList } from './components/TasksList';
-import type { Task } from './types';
+import type { TTask } from './types';
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TTask[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, startTransition] = useTransition();
 
