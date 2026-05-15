@@ -13,8 +13,14 @@ function App() {
   const loadTasks = useCallback(() => {
     setIsLoading(true);
     fetchAllTasks()
-      .then((data) => setTasks(data))
-      .catch(() => setError('Failed to load tasks'))
+      .then((result) => {
+        if (result.success) {
+          setTasks(result.data);
+          setError(null);
+        } else {
+          setError(result.error);
+        }
+      })
       .finally(() => setIsLoading(false));
   }, []);
 

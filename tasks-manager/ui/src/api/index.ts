@@ -1,27 +1,29 @@
+import type { Task, ApiResult } from '../types';
 
-// const baseUrl = "http://localhost:5002";
-const baseUrl = "";
+const url = '/api/v1/tasks';
 
-const url = `${baseUrl}/api/v1/tasks`
-
-export const fetchAllTasks = async () => {
+export const fetchAllTasks = async (): Promise<ApiResult<Task[]>> => {
     try {
         const response = await fetch(url);
+        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
         const { data } = await response.json();
-        return data;
-    } catch (error) {
-        console.log(error);
+        return { success: true, data };
+    } catch {
+        return { success: false, error: 'Network error — could not reach the server' };
     }
-}
+};
 
-export const addTask = async (name: string) => {
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name})
-    });
-    return response.json();
-}
+export const addTask = async (name: string): Promise<ApiResult<Task>> => {
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name }),
+        });
+        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
+        const { data } = await response.json();
+        return { success: true, data };
+    } catch {
+        return { success: false, error: 'Network error — could not reach the server' };
+    }
+};
