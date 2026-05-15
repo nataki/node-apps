@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useTransition } from 'react';
 import './App.css';
 import { fetchAllTasks } from './api';
 import { AddTaskForm } from './components/AddTaskForm';
@@ -7,22 +7,20 @@ import type { Task } from './types';
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, startTransition] = useTransition();
 
   const loadTasks = useCallback(() => {
-    setIsLoading(true);
-    fetchAllTasks()
-      .then((result) => {
-        if (result.success) {
-          setTasks(result.data);
-          setError(null);
-        } else {
-          setError(result.error);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+    startTransition(async () => {
+      const result = await fetchAllTasks();
+      if (result.success) {
+        setTasks(result.data);
+        setError(null);
+      } else {
+        setError(result.error);
+      }
+    });
+  }, [startTransition]);
 
   useEffect(() => { loadTasks(); }, [loadTasks]);
 
