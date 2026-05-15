@@ -39,6 +39,16 @@ export const updateTask = async (id: string, payload: { name: string; completed:
     }
 };
 
+export const deleteTask = async (id: string): Promise<TApiResult<Record<string, never>>> => {
+    try {
+        const response = await fetch(`${url}/${id}`, { method: 'DELETE' });
+        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
+        return { success: true, data: {} };
+    } catch {
+        return { success: false, error: 'Network error — could not reach the server' };
+    }
+};
+
 export const addTask = async (name: string): Promise<TApiResult<TTask>> => {
     try {
         const response = await fetch(url, {
