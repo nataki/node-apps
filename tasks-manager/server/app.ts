@@ -1,8 +1,8 @@
-require('dotenv').config();
-const express = require('express');
-const tasks = require('./routes/tasks');
-const notFound = require('./middleware/not-found');
-const errorHandlerMiddleware = require('./middleware/error-handler');
+import 'dotenv/config';
+import express from 'express';
+import tasks from './routes/tasks';
+import notFound from './middleware/not-found';
+import errorHandlerMiddleware from './middleware/error-handler';
 
 const app = express();
 
