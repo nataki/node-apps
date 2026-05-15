@@ -1,35 +1,13 @@
-import { useState, useEffect, useCallback, useTransition } from 'react';
-import './App.css';
-import { fetchAllTasks } from './api';
-import { AddTaskForm } from './components/AddTaskForm';
-import { TasksList } from './components/TasksList';
-import type { TTask } from './types';
+import { Routes, Route } from 'react-router';
+import { EditTask } from './pages/EditTask';
+import { Home } from './pages/Home';
 
 function App() {
-  const [tasks, setTasks] = useState<TTask[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, startTransition] = useTransition();
-
-  const loadTasks = useCallback(() => {
-    startTransition(async () => {
-      const result = await fetchAllTasks();
-      if (result.success) {
-        setTasks(result.data);
-        setError(null);
-      } else {
-        setError(result.error);
-      }
-    });
-  }, [startTransition]);
-
-  useEffect(() => { loadTasks(); }, [loadTasks]);
-
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-semibold mb-6">Tasks manager</h1>
-      <AddTaskForm onTaskAdded={loadTasks} />
-      <TasksList tasks={tasks} isLoading={isLoading} error={error} />
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/tasks/:id/edit" element={<EditTask />} />
+    </Routes>
   );
 }
 

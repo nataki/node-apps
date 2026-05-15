@@ -1,24 +1,25 @@
 import { useActionState, useRef } from 'react';
 import { addTask } from '../api';
 
-type Props = { onTaskAdded: () => void };
+type TProps = { onTaskAdded: () => void };
 
-export const AddTaskForm = ({ onTaskAdded }: Props) => {
+export const AddTaskForm = ({ onTaskAdded }: TProps) => {
     const formRef = useRef<HTMLFormElement>(null);
 
-    const handleAddTaskSubmit = async (_prevState: string | null, formData: FormData): Promise<string | null> => {
-        const name = formData.get('name') as string;
-        const result = await addTask(name);
-        if (!result.success) return result.error;
-        onTaskAdded();
-        formRef.current?.reset();
-        return null;
+    const addTaskAction = async (_prev: string | null, formData: FormData): Promise<string | null> => {
+        const result = await addTask(formData.get('name') as string);
+        const error = result.success ? null : result.error;
+        if (!error) {
+            onTaskAdded();
+            formRef.current?.reset();
+        }
+        return error;
     };
 
-    const [submitError, dispatchAction, isPending] = useActionState(handleAddTaskSubmit, null);
+    const [submitError, dispatch, isPending] = useActionState(addTaskAction, null);
 
     return (
-        <form ref={formRef} action={dispatchAction} className="flex flex-col gap-0 mb-6">
+        <form ref={formRef} action={dispatch} className="flex flex-col gap-0 mb-6">
             <div className="flex mb-3">
                 <input
                     type="text"
@@ -34,7 +35,6 @@ export const AddTaskForm = ({ onTaskAdded }: Props) => {
                     Add
                 </button>
             </div>
-
             {submitError && <p className="text-sm text-red-500">{submitError}</p>}
         </form>
     );
