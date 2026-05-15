@@ -19,17 +19,17 @@ export const AddTaskForm = ({ onTaskAdded }: Props) => {
 
     return (
         <form ref={formRef} action={dispatchAction} className="flex flex-col gap-0 mb-6">
-            <div className="flex gap-2 mb-3">
+            <div className="flex mb-3">
                 <input
                     type="text"
                     name="name"
                     placeholder="Task name"
-                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800"
+                    className="flex-1 rounded-l-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800"
                 />
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="rounded-md bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
+                    className="rounded-r-md bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
                 >
                     Add
                 </button>
