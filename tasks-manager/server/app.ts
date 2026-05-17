@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from 'express';
 import tasks from './routes/tasks';
 import notFound from './middleware/not-found';

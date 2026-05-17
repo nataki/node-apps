@@ -2,14 +2,13 @@
   "name": "tasks-manager-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "tsx --watch app.ts",
+    "start": "tsx --env-file=.env --watch app.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
-    "dotenv": "^16.0.0",
     "express": "^5.0.0"
   },
   "devDependencies": {
