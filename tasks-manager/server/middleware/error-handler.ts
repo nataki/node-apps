@@ -1,6 +1,10 @@
 import type { ErrorRequestHandler } from 'express';
 
-const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, next) =>
-  res.status(500).json({ success: false, msg: err.message || 'Server error' });
+const isDev = process.env.NODE_ENV !== 'production';
+
+const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ success: false, msg: isDev ? (err.message || 'Server error') : 'Server error' });
+};
 
 export default errorHandlerMiddleware;
