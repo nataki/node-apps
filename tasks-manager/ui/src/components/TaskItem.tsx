@@ -1,23 +1,28 @@
 import { useTransition } from 'react';
 import { Link } from 'react-router';
-import { deleteTask } from '../api';
+import { useQueryClient } from '@tanstack/react-query';
+import { deleteTask, taskKeys } from '../api';
 import type { TTask } from '../types';
-import { IconCheck } from './icons/IconCheck';
-import { IconPencil } from './icons/IconPencil';
-import { IconTrash } from './icons/IconTrash';
+import { IconCheck } from '../assets/icons/IconCheck';
+import { IconPencil } from '../assets/icons/IconPencil';
+import { IconTrash } from '../assets/icons/IconTrash';
 
 type TProps = {
     task: TTask;
-    onDeleted: () => void;
 };
 
-export const TaskItem = ({ task, onDeleted }: TProps) => {
+export const TaskItem = ({ task }: TProps) => {
     const [isDeleting, startTransition] = useTransition();
+    const queryClient = useQueryClient();
 
     const handleDelete = () => {
         startTransition(async () => {
-            await deleteTask(task.id);
-            onDeleted();
+            try {
+                await deleteTask(task.id);
+                await queryClient.invalidateQueries({ queryKey: taskKeys.all });
+            } catch {
+                // silently ignored; could be surfaced via a toast in the future
+            }
         });
     };
 

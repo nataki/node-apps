@@ -1,19 +1,20 @@
 import { useActionState, useRef } from 'react';
-import { addTask } from '../api';
+import { useQueryClient } from '@tanstack/react-query';
+import { addTask, taskKeys } from '../api';
 
-type TProps = { onTaskAdded: () => void };
-
-export const AddTaskForm = ({ onTaskAdded }: TProps) => {
+export const AddTaskForm = () => {
     const formRef = useRef<HTMLFormElement>(null);
+    const queryClient = useQueryClient();
 
     const addTaskAction = async (_prev: string | null, formData: FormData): Promise<string | null> => {
-        const result = await addTask(formData.get('name') as string);
-        const error = result.success ? null : result.error;
-        if (!error) {
-            onTaskAdded();
+        try {
+            await addTask(formData.get('name') as string);
+            await queryClient.invalidateQueries({ queryKey: taskKeys.all });
             formRef.current?.reset();
+            return null;
+        } catch (err) {
+            return err instanceof Error ? err.message : 'Something went wrong';
         }
-        return error;
     };
 
     const [submitError, dispatch, isPending] = useActionState(addTaskAction, null);

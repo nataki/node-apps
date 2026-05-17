@@ -1,65 +1,25 @@
-import type { TTask, TApiResult } from '../types';
+import type { TTask } from '../types';
+import { request, jsonInit } from './client';
 
 const url = '/api/v1/tasks';
 
-export const fetchAllTasks = async (): Promise<TApiResult<TTask[]>> => {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
-        const { data } = await response.json();
-        return { success: true, data };
-    } catch {
-        return { success: false, error: 'Network error — could not reach the server' };
-    }
+export const taskKeys = {
+    all: ['tasks'] as const,
+    detail: (id: string) => ['tasks', id] as const,
 };
 
-export const fetchTask = async (id: string): Promise<TApiResult<TTask>> => {
-    try {
-        const response = await fetch(`${url}/${id}`);
-        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
-        const { data } = await response.json();
-        return { success: true, data };
-    } catch {
-        return { success: false, error: 'Network error — could not reach the server' };
-    }
-};
+export const fetchAllTasks = (): Promise<TTask[]> =>
+    request(url);
 
-export const updateTask = async (id: string, payload: { name: string; completed: boolean }): Promise<TApiResult<TTask>> => {
-    try {
-        const response = await fetch(`${url}/${id}`, {
-            method: 'PATCH',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
-        const { data } = await response.json();
-        return { success: true, data };
-    } catch (e) {
-        return { success: false, error: 'Network error — could not reach the server' };
-    }
-};
+export const fetchTask = (id: string): Promise<TTask> =>
+    request(`${url}/${id}`);
 
-export const deleteTask = async (id: string): Promise<TApiResult<Record<string, never>>> => {
-    try {
-        const response = await fetch(`${url}/${id}`, { method: 'DELETE' });
-        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
-        return { success: true, data: {} };
-    } catch {
-        return { success: false, error: 'Network error — could not reach the server' };
-    }
-};
+export const addTask = (name: string): Promise<TTask> =>
+    request(url, jsonInit('POST', { name }));
 
-export const addTask = async (name: string): Promise<TApiResult<TTask>> => {
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name }),
-        });
-        if (!response.ok) return { success: false, error: `Server error: ${response.status}` };
-        const { data } = await response.json();
-        return { success: true, data };
-    } catch {
-        return { success: false, error: 'Network error — could not reach the server' };
-    }
+export const updateTask = (id: string, payload: { name: string; completed: boolean }): Promise<TTask> =>
+    request(`${url}/${id}`, jsonInit('PATCH', payload));
+
+export const deleteTask = async (id: string): Promise<void> => {
+    await request(`${url}/${id}`, { method: 'DELETE' });
 };

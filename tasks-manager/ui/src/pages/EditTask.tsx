@@ -1,43 +1,43 @@
-import { useEffect, useState, useActionState } from 'react';
+import { useActionState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
-import { fetchTask, updateTask } from '../api';
-import type { TTask } from '../types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchTask, updateTask, taskKeys } from '../api';
 
 export const EditTask = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
-    const [task, setTask] = useState<TTask | null>(null);
-    const [loadError, setLoadError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!id) return;
-        fetchTask(id).then((result) => {
-            if (result.success) setTask(result.data);
-            else setLoadError(result.error);
-        });
-    }, [id]);
+    const { data: task, isPending: isLoading, error: loadError } = useQuery({
+        queryKey: taskKeys.detail(id!),
+        queryFn: () => fetchTask(id!),
+        enabled: !!id,
+    });
 
     const editTaskAction = async (_prev: string | null, formData: FormData): Promise<string | null> => {
-        const result = await updateTask(id!, {
-            name: formData.get('name') as string,
-            completed: formData.get('completed') === 'on',
-        });
-        if (!result.success) return result.error;
-        navigate('/');
-        return null;
+        try {
+            await updateTask(id!, {
+                name: formData.get('name') as string,
+                completed: formData.get('completed') === 'on',
+            });
+            await queryClient.invalidateQueries({ queryKey: taskKeys.all });
+            navigate('/');
+            return null;
+        } catch (err) {
+            return err instanceof Error ? err.message : 'Something went wrong';
+        }
     };
 
     const [submitError, dispatch, isPending] = useActionState(editTaskAction, null);
 
     if (loadError) return (
         <div className="max-w-xl mx-auto px-4 py-10">
-            <p className="text-sm text-red-500">{loadError}</p>
+            <p className="text-sm text-red-500">{loadError.message}</p>
             <Link to="/" className="text-sm text-violet-600 hover:underline mt-4 inline-block">← Back</Link>
         </div>
     );
 
-    if (!task) return (
+    if (isLoading || !task) return (
         <div className="max-w-xl mx-auto px-4 py-10">
             <p className="text-sm text-gray-500">Loading...</p>
         </div>
