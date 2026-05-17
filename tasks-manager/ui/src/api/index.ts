@@ -17,7 +17,7 @@ export const fetchTask = (id: string): Promise<TTask> =>
 export const addTask = (name: string): Promise<TTask> =>
     request(url, jsonInit('POST', { name }));
 
-export const updateTask = (id: string, payload: { name: string; completed: boolean }): Promise<TTask> =>
+export const updateTask = (id: string, payload: Partial<{ name: string; completed: boolean }>): Promise<TTask> =>
     request(`${url}/${id}`, jsonInit('PATCH', payload));
 
 export const deleteTask = async (id: string): Promise<void> => {

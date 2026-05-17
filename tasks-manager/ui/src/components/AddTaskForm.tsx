@@ -26,6 +26,7 @@ export const AddTaskForm = () => {
                     type="text"
                     name="name"
                     placeholder="Task name"
+                    required
                     className="flex-1 rounded-l-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800"
                 />
                 <button

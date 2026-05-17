@@ -9,14 +9,15 @@ export const EditTask = () => {
     const queryClient = useQueryClient();
 
     const { data: task, isPending: isLoading, error: loadError } = useQuery({
-        queryKey: taskKeys.detail(id!),
-        queryFn: () => fetchTask(id!),
+        queryKey: taskKeys.detail(id ?? ''),
+        queryFn: () => fetchTask(id ?? ''),
         enabled: !!id,
     });
 
     const editTaskAction = async (_prev: string | null, formData: FormData): Promise<string | null> => {
+        if (!id) return 'Invalid task ID';
         try {
-            await updateTask(id!, {
+            await updateTask(id, {
                 name: formData.get('name') as string,
                 completed: formData.get('completed') === 'on',
             });
